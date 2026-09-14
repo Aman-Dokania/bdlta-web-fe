@@ -11,8 +11,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleGoogleLogin() {
+    setLoading(true)
+    setMessage('')
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -22,13 +26,15 @@ export default function LoginPage() {
 
     if (error) {
       setMessage(error.message)
+      setLoading(false)
     }
   }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
 
-    setMessage('Logging in...')
+    setLoading(true)
+    setMessage('Signing you in...')
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -37,6 +43,7 @@ export default function LoginPage() {
 
     if (error) {
       setMessage(error.message)
+      setLoading(false)
       return
     }
 
@@ -46,6 +53,7 @@ export default function LoginPage() {
 
     if (!user) {
       setMessage('Login succeeded, but the user session could not be loaded.')
+      setLoading(false)
       return
     }
 
@@ -57,11 +65,13 @@ export default function LoginPage() {
 
     if (profileError) {
       setMessage(profileError.message)
+      setLoading(false)
       return
     }
 
     if (!profile) {
       setMessage('Your account has no profile record.')
+      setLoading(false)
       return
     }
 
@@ -71,22 +81,22 @@ export default function LoginPage() {
     router.push(
       role === 'admin' || role === 'super_admin'
         ? '/admin/dashboard'
-        : '/player/dashboard'
+        : '/'
     )
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-100 px-6 py-12">
+    <main className="login-motion-page relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-100 px-6 py-12">
       <form
         onSubmit={handleLogin}
-        className="w-full max-w-md space-y-4"
+        className="relative z-10 w-full max-w-md space-y-4"
       >
         <div className="mb-8 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-700 text-lg font-black text-white shadow-lg">
             B
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.24em] text-green-700">
-            District Tennis Association
+            Bhagalpur District Lawn Tennis Association
           </p>
           <h1 className="mt-2 text-3xl font-black text-slate-900">
             Welcome back
@@ -96,7 +106,9 @@ export default function LoginPage() {
           </p>
         </div>
 
+        <label htmlFor="email" className="sr-only">Email</label>
         <input
+          id="email"
           type="email"
           placeholder="Email"
           value={email}
@@ -105,7 +117,9 @@ export default function LoginPage() {
           required
         />
 
+        <label htmlFor="password" className="sr-only">Password</label>
         <input
+          id="password"
           type="password"
           placeholder="Password"
           value={password}
@@ -116,15 +130,17 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-black p-3 font-semibold text-white shadow-sm"
+          disabled={loading}
+          className="w-full rounded-lg bg-black p-3 font-semibold text-white shadow-sm disabled:opacity-60"
         >
-          Login
+          {loading ? 'Signing in...' : 'Login'}
         </button>
 
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="w-full rounded-lg border p-3 font-medium"
+          disabled={loading}
+          className="w-full rounded-lg border p-3 font-medium disabled:opacity-60"
         >
           Continue with Google
         </button>
@@ -135,7 +151,11 @@ export default function LoginPage() {
             Create account
           </Link>
         </p>
-
+        <p className="text-center text-sm text-slate-500">
+          <Link href="/" className="font-medium text-green-700 hover:underline">
+            Back to homepage
+          </Link>
+        </p>
         {message && (
           <p className="rounded-lg bg-green-50 p-3 text-center text-sm text-green-800">
             {message}

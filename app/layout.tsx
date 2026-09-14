@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import SiteMotionShell from '@/src/components/SiteMotionShell'
 import './globals.css'
 
 const geistSans = Geist({
@@ -24,7 +25,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full bg-[var(--color-mist)] text-slate-900">{children}</body>
+      <body className="min-h-full bg-[var(--color-mist)] text-slate-900">
+        <SiteMotionShell>{children}</SiteMotionShell>
+      </body>
     </html>
   )
 }

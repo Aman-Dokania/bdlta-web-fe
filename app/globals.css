@@ -28,9 +28,496 @@ body {
   line-height: 1.5;
 }
 
+.site-motion-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.site-motion-shell > .relative {
+  min-height: 100vh;
+}
+
+.tennis-animation {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.tennis-court-lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(90vw, 980px);
+  height: min(58vw, 620px);
+  border: 2px solid rgba(22, 131, 90, 0.3);
+  transform: translate(-50%, -50%) perspective(700px) rotateX(58deg) rotateZ(-8deg);
+  box-shadow: inset 0 0 0 24px rgba(22, 131, 90, 0.06), inset 0 0 0 26px rgba(22, 131, 90, 0.26);
+}
+
+.tennis-court-lines::before,
+.tennis-court-lines::after {
+  position: absolute;
+  content: '';
+  background: rgba(22, 131, 90, 0.24);
+}
+
+.tennis-court-lines::before {
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 2px;
+}
+
+.tennis-court-lines::after {
+  top: 18%;
+  bottom: 18%;
+  left: 50%;
+  width: 2px;
+}
+
+.tennis-ball {
+  position: absolute;
+  width: 38px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #b9f23d;
+  box-shadow: 0 12px 22px rgba(24, 73, 45, 0.28), inset -5px -5px 0 rgba(44, 117, 63, 0.24);
+  filter: saturate(1.35);
+  opacity: 1;
+}
+
+.tennis-ball::after {
+  position: absolute;
+  inset: 5px 9px;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-left-color: transparent;
+  border-radius: 50%;
+  content: '';
+  transform: rotate(28deg);
+}
+
+.tennis-racket {
+  position: absolute;
+  width: 112px;
+  height: 190px;
+  opacity: 0.42;
+  transform-origin: center;
+  animation: tennis-racket-swing 8s ease-in-out infinite;
+}
+
+.tennis-racket-one {
+  top: 42%;
+  left: 8%;
+  transform: rotate(72deg);
+}
+
+.tennis-racket-two {
+  top: 42%;
+  right: 8%;
+  transform: rotate(-108deg);
+  animation-name: tennis-racket-return;
+}
+
+.tennis-racket-head {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 88px;
+  height: 116px;
+  border: 5px solid var(--color-court);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(22, 131, 90, 0.12);
+}
+
+.tennis-racket-head::before,
+.tennis-racket-head::after {
+  position: absolute;
+  content: '';
+  background: rgba(22, 131, 90, 0.24);
+}
+
+.tennis-racket-head::before {
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 1px;
+  box-shadow: -18px 0 rgba(22, 131, 90, 0.2), 18px 0 rgba(22, 131, 90, 0.2);
+}
+
+.tennis-racket-head::after {
+  top: 50%;
+  right: 8px;
+  left: 8px;
+  height: 1px;
+  box-shadow: 0 -20px rgba(22, 131, 90, 0.2), 0 20px rgba(22, 131, 90, 0.2);
+}
+
+.tennis-racket-handle {
+  position: absolute;
+  top: 108px;
+  left: 51px;
+  width: 10px;
+  height: 72px;
+  border-radius: 4px;
+  background: var(--color-court);
+  box-shadow: 0 0 0 4px rgba(22, 131, 90, 0.08);
+}
+
+.tennis-rally-ball {
+  top: 48%;
+  left: 13%;
+  width: 30px;
+  opacity: 1;
+  animation: tennis-rally 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes tennis-racket-swing {
+  0%, 100% { transform: rotate(72deg) translate3d(0, 0, 0); }
+  14% { transform: rotate(26deg) translate3d(3vw, 0, 0); }
+  50%, 86% { transform: rotate(72deg) translate3d(0, 0, 0); }
+}
+
+@keyframes tennis-racket-return {
+  0%, 50%, 100% { transform: rotate(-108deg) translate3d(0, 0, 0); }
+  64% { transform: rotate(-154deg) translate3d(-3vw, 0, 0); }
+  86% { transform: rotate(-108deg) translate3d(0, 0, 0); }
+}
+
+@keyframes tennis-rally {
+  0%, 14% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%, 64% { transform: translate3d(72vw, -1vh, 0) rotate(340deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(680deg); }
+}
+
+.tennis-ball-one {
+  top: 14%;
+  left: 12%;
+  animation: tennis-bounce-one 7s ease-in-out infinite;
+}
+
+.tennis-ball-two {
+  right: 12%;
+  bottom: 18%;
+  width: 26px;
+  animation: tennis-bounce-two 9s ease-in-out infinite;
+}
+
+.tennis-ball-three {
+  top: 22%;
+  right: 28%;
+  width: 18px;
+  animation: tennis-bounce-three 6s ease-in-out infinite;
+}
+
+@keyframes tennis-bounce-one {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(46vw, 54vh, 0) rotate(220deg); }
+}
+
+@keyframes tennis-bounce-two {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-48vw, -40vh, 0) rotate(-260deg); }
+}
+
+@keyframes tennis-bounce-three {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-24vw, 58vh, 0) rotate(180deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tennis-ball,
+  .tennis-racket {
+    animation: none;
+  }
+}
+
 /* Shared visual language for authenticated screens and utility pages. */
 .bg-gray-100 {
-  background: radial-gradient(circle at top right, #f8fcf9 0, #eef4f0 42%, #e5eee8 100%) !important;
+  background: radial-gradient(circle at top right, rgba(248, 252, 249, 0.9) 0, rgba(238, 244, 240, 0.88) 42%, rgba(229, 238, 232, 0.9) 100%) !important;
+}
+
+.site-motion-shell:has(.login-motion-page) > .tennis-animation {
+  opacity: 1;
+}
+
+.login-motion-page {
+  background: radial-gradient(circle at top right, rgba(248, 252, 249, 0.3) 0, rgba(238, 244, 240, 0.26) 42%, rgba(229, 238, 232, 0.32) 100%) !important;
+}
+
+.site-motion-shell:has(.login-motion-page) .tennis-racket {
+  opacity: 0.3;
+}
+
+.site-motion-shell:has(.signup-motion-page) > .tennis-animation {
+  opacity: 1;
+}
+
+.signup-motion-page {
+  background: radial-gradient(circle at top right, rgba(248, 252, 249, 0.3) 0, rgba(238, 244, 240, 0.26) 42%, rgba(229, 238, 232, 0.32) 100%) !important;
+}
+
+/* Authenticated portal layout. Page content remains responsible for its data and actions. */
+.portal-shell {
+  display: flex;
+  min-height: 100vh;
+  color: #183127;
+}
+
+.portal-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  display: flex;
+  width: 248px;
+  flex-direction: column;
+  border-right: 1px solid rgba(173, 197, 183, 0.55);
+  background: rgba(247, 251, 248, 0.82);
+  padding: 28px 16px 20px;
+  backdrop-filter: blur(18px);
+}
+
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #183127;
+  text-decoration: none;
+}
+
+.portal-brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: #173d2d;
+  color: #d9f66a;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(18, 60, 44, 0.2);
+}
+
+.portal-brand strong,
+.portal-brand small {
+  display: block;
+}
+
+.portal-brand strong {
+  font-size: 17px;
+  letter-spacing: 0.04em;
+}
+
+.portal-brand small {
+  margin-top: 2px;
+  color: #718177;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.portal-section-label {
+  margin: 46px 12px 12px;
+  color: #829087;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.portal-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.portal-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  color: #5d6e64;
+  padding: 11px 12px;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.portal-nav-link:hover {
+  background: rgba(218, 235, 222, 0.75);
+  color: #173d2d;
+  transform: translateX(2px);
+}
+
+.portal-nav-link.is-active {
+  background: #173d2d;
+  color: #f5fbe9;
+  box-shadow: 0 8px 18px rgba(18, 60, 44, 0.14);
+}
+
+.portal-nav-icon {
+  display: grid;
+  width: 22px;
+  place-items: center;
+  color: #829087;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.portal-nav-link.is-active .portal-nav-icon {
+  color: #d9f66a;
+}
+
+.portal-sidebar-footer {
+  display: grid;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.portal-back-link {
+  color: #718177;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.portal-back-link:hover {
+  color: #173d2d;
+}
+
+.portal-logout {
+  border: 1px solid #d4e1d7;
+  background: rgba(255, 255, 255, 0.72);
+  color: #395247;
+}
+
+.portal-logout:hover {
+  border-color: #9db7a5;
+  background: #fff;
+  color: #173d2d;
+}
+
+.portal-content {
+  min-width: 0;
+  flex: 1;
+  margin-left: 248px;
+}
+
+.portal-content > main {
+  min-height: 100vh;
+  background: transparent !important;
+  padding: 36px clamp(20px, 4vw, 56px) 64px !important;
+}
+
+.portal-content > main > div {
+  max-width: 1180px;
+}
+
+.portal-content main .bg-white {
+  border: 1px solid rgba(204, 221, 210, 0.82);
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 14px 34px rgba(44, 76, 57, 0.07) !important;
+}
+
+.portal-content main table thead tr {
+  background: #f3f8f4;
+  color: #64766a;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.portal-content main table tbody tr {
+  border-color: #e3ece5;
+}
+
+.portal-content main input,
+.portal-content main select,
+.portal-content main textarea {
+  border-color: #cfddd2;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.portal-content main input:focus,
+.portal-content main select:focus,
+.portal-content main textarea:focus {
+  border-color: #4d9a70;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(77, 154, 112, 0.16);
+}
+
+.portal-content main > div > div > .portal-logout,
+.portal-content main .portal-logout {
+  display: none;
+}
+
+.portal-mobile-bar,
+.portal-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .portal-sidebar {
+    display: none;
+  }
+
+  .portal-content {
+    margin-left: 0;
+  }
+
+  .portal-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(173, 197, 183, 0.55);
+    background: rgba(247, 251, 248, 0.88);
+    padding: 14px 20px;
+    backdrop-filter: blur(18px);
+  }
+
+  .portal-mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    border-bottom: 1px solid rgba(204, 221, 210, 0.7);
+    background: rgba(247, 251, 248, 0.74);
+    padding: 9px 20px;
+  }
+
+  .portal-mobile-nav a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    border-radius: 8px;
+    color: #65766a;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .portal-mobile-nav a span:last-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .portal-mobile-nav a.is-active {
+    background: #173d2d;
+    color: #f5fbe9;
+  }
+
+  .portal-content > main {
+    padding: 24px 16px 44px !important;
+  }
+}
+
+.site-motion-shell:has(.signup-motion-page) .tennis-racket {
+  opacity: 0.3;
 }
 
 .bg-gray-50 {
@@ -152,6 +639,99 @@ table {
 }
 
 @media (max-width: 639px) {
+  .tennis-court-lines {
+    width: 118vw;
+    height: 82vw;
+    opacity: 0.7;
+  }
+
+  .tennis-racket {
+    width: 62px;
+    height: 108px;
+    opacity: 0.16;
+  }
+
+  .tennis-racket-one {
+    top: 1%;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg) scale(0.58);
+    animation-name: tennis-racket-mobile-top;
+  }
+
+  .tennis-racket-two {
+    top: auto;
+    right: auto;
+    bottom: 1%;
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg) scale(0.58);
+    animation-name: tennis-racket-mobile-bottom;
+  }
+
+  .tennis-racket-head {
+    left: 8px;
+    width: 60px;
+    height: 80px;
+    border-width: 4px;
+  }
+
+  .tennis-racket-handle {
+    top: 74px;
+    left: 35px;
+    width: 8px;
+    height: 52px;
+  }
+
+  .tennis-rally-ball {
+    top: 25%;
+    left: 50%;
+    width: 22px;
+    animation-name: tennis-rally-mobile-vertical;
+  }
+
+  .tennis-ball-one,
+  .tennis-ball-two,
+  .tennis-ball-three,
+  .tennis-ball-four,
+  .tennis-ball-five {
+    display: block;
+  }
+
+  .tennis-ball-one {
+    top: 20%;
+    left: 12%;
+    width: 20px;
+    animation-duration: 5s;
+  }
+
+  .tennis-ball-two {
+    top: 34%;
+    right: 10%;
+    bottom: auto;
+    width: 26px;
+    animation-duration: 7s;
+  }
+
+  .tennis-ball-three {
+    top: 58%;
+    right: 14%;
+    width: 17px;
+    animation-duration: 4.5s;
+  }
+
+  .tennis-ball-four {
+    top: 70%;
+    left: 10%;
+    width: 25px;
+    animation: tennis-float-four 6s ease-in-out infinite;
+  }
+
+  .tennis-ball-five {
+    top: 82%;
+    right: 18%;
+    width: 15px;
+    animation: tennis-float-five 5s ease-in-out infinite;
+  }
+
   main > form {
     border-radius: 1rem;
     padding: 1.25rem;
@@ -193,6 +773,42 @@ table {
   a {
     max-width: 100%;
   }
+}
+
+@keyframes tennis-rally-mobile {
+  0%, 14% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%, 64% { transform: translate3d(66vw, -1vh, 0) rotate(340deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(680deg); }
+}
+
+@keyframes tennis-racket-mobile-top {
+  0%, 100% { transform: translateX(-50%) rotate(180deg) scale(0.58); }
+  11% { transform: translateX(-50%) rotate(180deg) scale(0.58); }
+  14% { transform: translate(-50%, 5px) rotate(154deg) scale(0.58); }
+  50%, 86% { transform: translateX(-50%) rotate(180deg) scale(0.58); }
+}
+
+@keyframes tennis-racket-mobile-bottom {
+  0%, 50%, 100% { transform: translateX(-50%) rotate(0deg) scale(0.58); }
+  61% { transform: translateX(-50%) rotate(0deg) scale(0.58); }
+  64% { transform: translate(-50%, -5px) rotate(26deg) scale(0.58); }
+  86% { transform: translateX(-50%) rotate(0deg) scale(0.58); }
+}
+
+@keyframes tennis-rally-mobile-vertical {
+  0%, 14% { transform: translate(-50%, 0) rotate(0deg); }
+  50%, 64% { transform: translate(-50%, 43vh) rotate(340deg); }
+  100% { transform: translate(-50%, 0) rotate(680deg); }
+}
+
+@keyframes tennis-float-four {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(18vw, -9vh, 0) rotate(180deg); }
+}
+
+@keyframes tennis-float-five {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-16vw, -12vh, 0) rotate(-220deg); }
 }
 
 ::-webkit-scrollbar {

@@ -5,6 +5,43 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/src/lib/supabase/client'
 import LogoutButton from '@/src/components/LogoutButton'
 
+type Tournament = {
+  id: string
+  name: string
+  description: string | null
+  venue: string
+  start_date: string
+  end_date: string
+  registration_deadline: string | null
+  status: string
+}
+
+type Category = {
+  id: string
+  name: string
+  event_type: string
+  gender: string | null
+  age_group: string | null
+  entry_fee: number
+  max_players: number | null
+  registration_open: boolean
+  created_at: string
+}
+
+type Registration = {
+  registration_id: string
+  player_name: string
+  player_number: string | null
+  player_email: string | null
+  category_name: string
+  event_type: string
+  partner_player_name: string | null
+  partner_player_number: string | null
+  entry_fee: number
+  registration_status: string
+  registered_at: string | null
+}
+
 export default function AdminTournamentDetailsPage() {
   const params = useParams()
   const router = useRouter()
@@ -15,9 +52,9 @@ export default function AdminTournamentDetailsPage() {
   const [saving, setSaving] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState(false)
 
-  const [tournament, setTournament] = useState<any>(null)
-  const [categories, setCategories] = useState<any[]>([])
-  const [registrations, setRegistrations] = useState<any[]>([])
+  const [tournament, setTournament] = useState<Tournament | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [registrations, setRegistrations] = useState<Registration[]>([])
   const [loadingRegistrations, setLoadingRegistrations] =
     useState(false)
 
@@ -213,11 +250,13 @@ export default function AdminTournamentDetailsPage() {
       setMaxPlayers('')
 
       alert('Category added successfully.')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Category creation error:', error)
 
       alert(
-        error.message || 'Unable to add category.'
+        error instanceof Error
+          ? error.message
+          : 'Unable to add category.'
       )
     } finally {
       setSaving(false)
@@ -248,18 +287,19 @@ export default function AdminTournamentDetailsPage() {
         throw error
       }
 
-      setTournament((current: any) => ({
+      setTournament((current) => current && ({
         ...current,
         status: newStatus,
       }))
 
       alert('Tournament status updated successfully.')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Tournament status update error:', error)
 
       alert(
-        error.message ||
-          'Unable to update tournament status.'
+        error instanceof Error
+          ? error.message
+          : 'Unable to update tournament status.'
       )
     } finally {
       setUpdatingStatus(false)
@@ -306,23 +346,26 @@ export default function AdminTournamentDetailsPage() {
       <div className="mx-auto max-w-6xl">
 
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <button
               onClick={() =>
                 router.push('/admin/tournaments')
               }
-              className="mb-3 text-sm text-gray-600 hover:underline"
+              className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-green-800"
             >
-              ← Back to Tournaments
+              <span aria-hidden="true">←</span> Back to Tournaments
             </button>
 
-            <h1 className="text-3xl font-bold">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-green-700">
+              Tournament workspace
+            </p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-green-950">
               {tournament.name}
             </h1>
 
-            <p className="mt-1 text-gray-600">
-              Tournament management
+            <p className="mt-2 text-gray-600">
+              Configure categories, track registrations, and move this event through its lifecycle.
             </p>
           </div>
 
@@ -330,10 +373,26 @@ export default function AdminTournamentDetailsPage() {
         </div>
 
         {/* Tournament Information */}
-        <div className="mt-8 rounded-lg bg-white p-6 shadow">
-          <h2 className="text-xl font-semibold">
-            Tournament Information
-          </h2>
+        <div className="mt-8 rounded-lg bg-white p-6 shadow sm:p-8">
+          <div className="flex flex-col gap-3 border-b border-green-100 pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
+                Event overview
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-green-950">
+                Tournament information
+              </h2>
+            </div>
+            <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+              ['open', 'published', 'registration_open', 'ongoing'].includes(tournament.status)
+                ? 'bg-green-100 text-green-700'
+                : tournament.status === 'completed'
+                  ? 'bg-gray-100 text-gray-600'
+                  : 'bg-yellow-100 text-yellow-700'
+            }`}>
+              {tournament.status.replace('_', ' ')}
+            </span>
+          </div>
 
           <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
@@ -376,10 +435,6 @@ export default function AdminTournamentDetailsPage() {
                 Status
               </p>
 
-              <span className="inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
-                {tournament.status}
-              </span>
-
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={() =>
@@ -389,7 +444,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'published'
                   }
-                  className="rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-green-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Publish
                 </button>
@@ -402,7 +457,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'registration_open'
                   }
-                  className="rounded bg-green-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-green-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Open Registration
                 </button>
@@ -415,7 +470,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'registration_closed'
                   }
-                  className="rounded bg-yellow-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-yellow-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Close Registration
                 </button>
@@ -428,7 +483,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'ongoing'
                   }
-                  className="rounded bg-purple-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Mark Ongoing
                 </button>
@@ -441,7 +496,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'completed'
                   }
-                  className="rounded bg-gray-700 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Mark Completed
                 </button>
@@ -454,7 +509,7 @@ export default function AdminTournamentDetailsPage() {
                     updatingStatus ||
                     tournament.status === 'cancelled'
                   }
-                  className="rounded bg-red-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-red-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Cancel Tournament
                 </button>
@@ -490,14 +545,20 @@ export default function AdminTournamentDetailsPage() {
         </div>
 
         {/* Add Category */}
-        <div className="mt-6 rounded-lg bg-white p-6 shadow">
-          <h2 className="text-xl font-semibold">
-            Add Category
+        <div className="mt-6 rounded-lg bg-white p-6 shadow sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
+            Competition setup
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold text-green-950">
+            Add a category
           </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Define the format and entry rules players will see when they register.
+          </p>
 
           <form
             onSubmit={addCategory}
-            className="mt-6 grid gap-5 sm:grid-cols-2"
+            className="mt-8 grid gap-5 sm:grid-cols-2"
           >
             <div className="sm:col-span-2">
               <label className="mb-1 block text-sm font-medium">
@@ -511,7 +572,7 @@ export default function AdminTournamentDetailsPage() {
                   setCategoryName(e.target.value)
                 }
                 placeholder="e.g. Men's Singles Open"
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition placeholder:text-gray-400"
                 required
               />
             </div>
@@ -526,7 +587,7 @@ export default function AdminTournamentDetailsPage() {
                 onChange={(e) =>
                   setEventType(e.target.value)
                 }
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition"
               >
                 <option value="singles">
                   Singles
@@ -552,7 +613,7 @@ export default function AdminTournamentDetailsPage() {
                 onChange={(e) =>
                   setGender(e.target.value)
                 }
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition"
               >
                 <option value="">
                   Any / Not specified
@@ -580,7 +641,7 @@ export default function AdminTournamentDetailsPage() {
                   setAgeGroup(e.target.value)
                 }
                 placeholder="e.g. Open, U-18, 35+"
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition placeholder:text-gray-400"
               />
             </div>
 
@@ -596,7 +657,7 @@ export default function AdminTournamentDetailsPage() {
                 onChange={(e) =>
                   setEntryFee(e.target.value)
                 }
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition"
               />
             </div>
 
@@ -613,7 +674,7 @@ export default function AdminTournamentDetailsPage() {
                   setMaxPlayers(e.target.value)
                 }
                 placeholder="Leave empty for unlimited"
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-black"
+                className="w-full rounded-lg border px-4 py-3 outline-none transition placeholder:text-gray-400"
               />
             </div>
 
@@ -621,7 +682,7 @@ export default function AdminTournamentDetailsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-lg bg-black px-5 py-3 font-medium text-white disabled:opacity-40"
+                className="rounded-lg bg-green-950 px-6 py-3 font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {saving
                   ? 'Adding...'
@@ -632,15 +693,26 @@ export default function AdminTournamentDetailsPage() {
         </div>
 
         {/* Categories */}
-        <div className="mt-6 rounded-lg bg-white p-6 shadow">
-          <h2 className="text-xl font-semibold">
-            Categories ({categories.length})
-          </h2>
+        <div className="mt-6 rounded-lg bg-white p-6 shadow sm:p-8">
+          <div className="flex flex-col gap-3 border-b border-green-100 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
+                Event formats
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-green-950">
+                Categories
+              </h2>
+            </div>
+            <span className="w-fit rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-800">
+              {categories.length} {categories.length === 1 ? 'category' : 'categories'}
+            </span>
+          </div>
 
           {categories.length === 0 ? (
-            <p className="mt-5 text-gray-500">
-              No categories added yet.
-            </p>
+            <div className="mt-5 rounded-lg border border-dashed border-green-200 bg-green-50/60 px-6 py-8 text-center">
+              <p className="font-semibold text-green-950">No categories yet</p>
+              <p className="mt-1 text-sm text-gray-500">Add the first category above to open registration options.</p>
+            </div>
           ) : (
             <div className="mt-5 overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -680,7 +752,7 @@ export default function AdminTournamentDetailsPage() {
                   {categories.map((category) => (
                     <tr
                       key={category.id}
-                      className="border-b last:border-b-0"
+                      className="border-b transition hover:bg-green-50/60 last:border-b-0"
                     >
                       <td className="px-3 py-4 font-medium">
                         {category.name}
@@ -710,7 +782,11 @@ export default function AdminTournamentDetailsPage() {
                       </td>
 
                       <td className="px-3 py-4">
-                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          category.registration_open
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
                           {category.registration_open
                             ? 'Open'
                             : 'Closed'}
@@ -725,12 +801,15 @@ export default function AdminTournamentDetailsPage() {
         </div>
 
         {/* Tournament Registrations */}
-        <div className="mt-6 rounded-lg bg-white p-6 shadow">
+        <div className="mt-6 rounded-lg bg-white p-6 shadow sm:p-8">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold">
-                Tournament Registrations
-              </h2>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
+                  Participation
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-green-950">
+                  Tournament registrations
+                </h2>
 
               <p className="mt-1 text-sm text-gray-500">
                 {registrations.length} registration
@@ -744,10 +823,11 @@ export default function AdminTournamentDetailsPage() {
               Loading registrations...
             </p>
           ) : registrations.length === 0 ? (
-            <div className="mt-6 rounded-lg bg-gray-50 p-6 text-center">
-              <p className="text-gray-500">
+            <div className="mt-6 rounded-lg border border-dashed border-green-200 bg-green-50/60 p-8 text-center">
+              <p className="font-semibold text-green-950">
                 No players have registered for this tournament yet.
               </p>
+              <p className="mt-1 text-sm text-gray-500">Registrations will appear here as players join categories.</p>
             </div>
           ) : (
             <div className="mt-6 overflow-x-auto">
@@ -788,7 +868,7 @@ export default function AdminTournamentDetailsPage() {
                   {registrations.map((registration) => (
                     <tr
                       key={registration.registration_id}
-                      className="border-b last:border-b-0"
+                      className="border-b transition hover:bg-green-50/60 last:border-b-0"
                     >
                       {/* Player */}
                       <td className="px-3 py-4">

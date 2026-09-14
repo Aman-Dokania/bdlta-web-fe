@@ -12,7 +12,7 @@ export default function PlayerProfilePage() {
   const [fullName, setFullName] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [gender, setGender] = useState('')
-  const [phone, setPhone] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [address, setAddress] = useState('')
 
   const [photo, setPhoto] = useState<File | null>(null)
@@ -70,7 +70,9 @@ export default function PlayerProfilePage() {
       setFullName(data.full_name || '')
       setDateOfBirth(data.date_of_birth || '')
       setGender(data.gender || '')
-      setPhone(data.phone || '')
+      setPhoneNumber(
+        (data.phone || '').replace(/^\+91\s*/, '').replace(/\D/g, '').slice(-10)
+      )
       setAddress(data.address || '')
 
       // Generate signed URL for existing photo
@@ -175,7 +177,7 @@ export default function PlayerProfilePage() {
           p_full_name: fullName.trim(),
           p_date_of_birth: dateOfBirth || null,
           p_gender: gender || null,
-          p_phone: phone.trim(),
+          p_phone: phoneNumber ? `+91 ${phoneNumber}` : '',
           p_address: address.trim() || null,
           p_photo_url: photoPath,
         }
@@ -352,14 +354,23 @@ export default function PlayerProfilePage() {
                 Phone Number
               </label>
 
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                className="w-full rounded border px-4 py-3"
-                placeholder="Enter your phone number"
-              />
+              <div className="flex overflow-hidden rounded border bg-white focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
+                <span className="flex items-center border-r bg-slate-50 px-4 text-sm font-semibold text-slate-600">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  value={phoneNumber}
+                  onChange={(e) =>
+                    setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))
+                  }
+                  required
+                  className="min-w-0 flex-1 px-4 py-3 outline-none"
+                  placeholder="Enter 10-digit number"
+                  aria-label="Phone number without country code"
+                />
+              </div>
             </div>
 
             {/* Address */}
@@ -379,30 +390,43 @@ export default function PlayerProfilePage() {
 
             {/* Photo */}
             <div>
-              <label className="mb-2 block font-medium">
-                Player Photo
-              </label>
+              <p className="mb-2 block font-medium">Player Photo</p>
 
-              {photoPreview && (
-                <div className="mb-4">
+              <div className="flex items-center gap-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                {photoPreview ? (
                   <img
                     src={photoPreview}
                     alt="Player profile"
-                    className="h-32 w-32 rounded-lg border object-cover"
+                    className="h-20 w-20 shrink-0 rounded-xl border border-white object-cover shadow-sm"
                   />
+                ) : (
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-slate-200 text-2xl text-slate-400">
+                    <span aria-hidden="true">+</span>
+                  </div>
+                )}
+
+                <div className="min-w-0">
+                  <label
+                    htmlFor="player-photo"
+                    className="inline-flex cursor-pointer rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+                  >
+                    {photoPreview ? 'Change photo' : 'Choose photo'}
+                  </label>
+                  <input
+                    id="player-photo"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handlePhotoChange}
+                    className="sr-only"
+                  />
+                  <p className="mt-2 truncate text-sm text-slate-600">
+                    {photo?.name || (photoPreview ? 'Current profile photo' : 'No photo selected')}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    JPG, PNG or WebP. Maximum 5 MB.
+                  </p>
                 </div>
-              )}
-
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handlePhotoChange}
-                className="w-full rounded border px-4 py-3"
-              />
-
-              <p className="mt-1 text-sm text-gray-500">
-                JPG, PNG or WebP. Maximum 5 MB.
-              </p>
+              </div>
             </div>
 
             {/* Messages */}

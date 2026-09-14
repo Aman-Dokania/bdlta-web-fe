@@ -79,7 +79,7 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 px-6 py-12">
+    <main className="signup-motion-page min-h-screen bg-gray-100 px-6 py-12">
 
       <div className="mx-auto max-w-md">
 
@@ -219,6 +219,12 @@ export default function SignupPage() {
             className="font-medium text-green-700 hover:underline"
           >
             Log in
+          </Link>
+        </p>
+
+        <p className="mt-3 text-center text-sm text-gray-500">
+          <Link href="/" className="font-medium text-green-700 hover:underline">
+            Back to homepage
           </Link>
         </p>
 

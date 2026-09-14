@@ -21,9 +21,9 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
+      className="portal-logout rounded-lg px-3 py-2 text-sm font-semibold transition"
     >
-      Logout
+      Sign out
     </button>
   )
 }

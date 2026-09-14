@@ -4,25 +4,20 @@ import Navbar from './components/Navbar'
 
 const leadership = [
   {
-    role: 'President',
-    name: 'Shri Rakesh Kumar',
-    description: 'Leadership and strategic vision for district tennis growth.',
-  },
-  {
-    role: 'Secretary',
-    name: 'Mr. Ajit Singh',
-    description: 'Operational oversight and member support across all programs.',
-  },
-  {
     role: 'Head Coach',
-    name: 'Coach Vikram Sharma',
-    description: '10+ years of coaching experience with junior and competitive players.',
+    name: 'Mr. Sanjay',
+    description: 'Leading the coaching program with a focus on discipline, technique and competitive growth.',
     featured: true,
   },
   {
     role: 'Coach',
-    name: 'Coach Neha Verma',
-    description: 'Specializes in youth training, fundamentals, and match readiness.',
+    name: 'Mr. Abhishek',
+    description: 'Developing players through structured drills, fundamentals and match-day confidence.',
+  },
+  {
+    role: 'Coach',
+    name: 'Mr. Sunil',
+    description: 'Supporting youth and club training with strong technical guidance and player development.',
   },
 ]
 
@@ -101,10 +96,10 @@ export default async function Home() {
 
       <section className="relative overflow-hidden bg-slate-950 text-white">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-35"
+          className="absolute inset-0 bg-cover bg-center opacity-50"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=1600&q=80')",
+              "url('https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=2400&q=90')",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-emerald-900/70" />
@@ -214,11 +209,11 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {leadership.map((person) => (
               <article
-                key={person.role}
-                className={`rounded-[2rem] border p-5 ${
+                key={`${person.role}-${person.name}`}
+                className={`flex h-full flex-col rounded-[2rem] border p-5 ${
                   person.featured
                     ? 'border-emerald-400 bg-gradient-to-b from-emerald-500/20 to-slate-900 ring-1 ring-emerald-400/40'
                     : 'border-slate-700 bg-slate-800/70'
@@ -235,7 +230,7 @@ export default async function Home() {
                   {person.role}
                 </div>
                 <h3 className="mt-3 text-2xl font-bold text-white">{person.name}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-300">{person.description}</p>
+                <p className="mt-3 flex-1 text-sm leading-6 text-slate-300">{person.description}</p>
               </article>
             ))}
           </div>
@@ -263,34 +258,6 @@ export default async function Home() {
               <p className="mt-4 text-sm leading-6 text-slate-600">{program.description}</p>
             </article>
           ))}
-        </div>
-      </section>
-
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">
-              Facilities
-            </p>
-            <h2 className="mt-3 text-3xl font-black sm:text-4xl">Our facilities, built for play.</h2>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
-            {facilities.map((item, index) => (
-              <div
-                key={item}
-                className="rounded-[2rem] bg-slate-50 p-6 ring-1 ring-slate-200"
-              >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-700">
-                  {['🎾', '🏋️', '🪑', '🚿', '🌳'][index]}
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">{item}</h3>
-                <p className="mt-3 text-sm text-slate-600">
-                  Ready for members, practice sessions and district events.
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
